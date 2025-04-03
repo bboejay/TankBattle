@@ -62,6 +62,32 @@ function checkCollisions() {
     walls.forEach(wall => {
       if (wall.checkCollision(bullet)) {
         bullet.active = false;
+        wall.destroy();
+      }
+    });
+  });
+}
+
+window.addEventListener('resize', () => {
+  canvas.width = game.width;
+  canvas.height = game.height;
+});
+
+// Main game loop
+function gameLoop(timestamp) {
+  const deltaTime = timestamp - lastTime;
+  lastTime = timestamp;
+  
+  // Clear canvas
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, game.width, game.height);
+  
+  // Update and render game objects
+  player.update(keys);
+  player.draw(ctx);
+  
+  // Update and draw enemies
+  enemies.forEach(enemy => {
   
 
 
