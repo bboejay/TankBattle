@@ -68,18 +68,13 @@ function checkCollisions() {
   });
 }
 
-window.addEventListener('resize', () => {
-  canvas.width = game.width;
-  canvas.height = game.height;
-});
-
 // Main game loop
 function gameLoop(timestamp) {
   const deltaTime = timestamp - lastTime;
   lastTime = timestamp;
   
   // Clear canvas
-  ctx.fillStyle = '#000';
+  ctx.fillStyle = '#000'; 
   ctx.fillRect(0, 0, game.width, game.height);
   
   // Update and render game objects
@@ -88,9 +83,35 @@ function gameLoop(timestamp) {
   
   // Update and draw enemies
   enemies.forEach(enemy => {
+    const bullet = enemy.update(player, deltaTime);
+    if (bullet) {
+      bullets.push(bullet);
+    }
+    enemy.draw(ctx);
+  });
   
+  // Update and draw walls
+  walls.forEach(wall => wall.draw(ctx));
+  
+  // Update and draw bullets
+  bullets = bullets.filter(b => b.active);
+  bullets.forEach(b => {
+    b.update();
+    b.draw(ctx);
+  });
+  
+  // Check collisions
+  checkCollisions();
+  
+  if (game.running) {
+    requestAnimationFrame(gameLoop);
+  }
+}
 
+// Start game
+requestAnimationFrame(gameLoop);
 
+// Handle window resize
 window.addEventListener('resize', () => {
   canvas.width = game.width;
   canvas.height = game.height;
