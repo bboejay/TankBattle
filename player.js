@@ -21,7 +21,7 @@ class PlayerTank {
     switch(this.direction) {
       case 'up':
         ctx.moveTo(this.x + this.width/2, this.y);
-        ctx.lineTo(this.x + this.width/2, this.y - 20);
+        ctx.lineTo(this x + this.width/2, this.y - 20);
         break;
       case 'down':
         ctx.moveTo(this.x + this.width/2, this.y + this.height);
@@ -56,6 +56,28 @@ class PlayerTank {
       this.x += this.speed;
       this.direction = 'right';
     }
+  }
+
+  shoot() {
+    let x = this.x + this.width/2;
+    let y = this.y + this.height/2;
+    
+    switch(this.direction) {
+      case 'up':
+        y = this.y;
+        break;
+      case 'down':
+        y = this.y + this.height;
+        break;
+      case 'left':
+        x = this.x;
+        break;
+      case 'right':
+        x = this.x + this.width;
+        break;
+    }
+    
+    return new Bullet(x, y, this.direction);
   }
 }
 

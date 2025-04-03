@@ -1,4 +1,5 @@
 import PlayerTank from './player.js';
+import Bullet from './bullet.js';
 
 // Initialize game
 const canvas = document.getElementById('gameCanvas');
@@ -14,7 +15,20 @@ const game = {
 
 // Input handling
 const keys = {};
-window.addEventListener('keydown', e => keys[e.code] = true);
+let bullets = [];
+let canShoot = true;
+
+window.addEventListener('keydown', e => {
+  keys[e.code] = true;
+  
+  // Handle shooting
+  if (e.code === 'Space' && canShoot) {
+    bullets.push(player.shoot());
+    canShoot = false;
+    setTimeout(() => canShoot = true, 200); // Shooting cooldown
+  }
+});
+
 window.addEventListener('keyup', e => keys[e.code] = false);
 
 // Create player
@@ -32,6 +46,13 @@ function gameLoop(timestamp) {
   // Update and render game objects
   player.update(keys);
   player.draw(ctx);
+  
+  // Update and draw bullets
+  bullets = bullets.filter(b => b.active);
+  bullets.forEach(b => {
+    b.update();
+    b.draw(ctx);
+  });
   
   if (game.running) {
     requestAnimationFrame(gameLoop);
