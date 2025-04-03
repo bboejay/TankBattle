@@ -1,5 +1,7 @@
 import PlayerTank from './player.js';
 import Bullet from './bullet.js';
+import Wall from './wall.js';
+import EnemyTank from './enemy.js';
 
 // Initialize game
 const canvas = document.getElementById('gameCanvas');
@@ -12,6 +14,20 @@ const game = {
   height: 600,
   running: true
 };
+
+// Game objects
+const player = new PlayerTank();
+const enemies = [
+  new EnemyTank(100, 100),
+  new EnemyTank(600, 100),
+  new EnemyTank(300, 300)
+];
+const walls = [
+  new Wall(200, 200, 80, 80),
+  new Wall(400, 400, 80, 80, 'steel'),
+  new Wall(100, 500, 80, 40),
+  new Wall(600, 300, 40, 80)
+];
 
 // Input handling
 const keys = {};
@@ -31,8 +47,18 @@ window.addEventListener('keydown', e => {
 
 window.addEventListener('keyup', e => keys[e.code] = false);
 
-// Create player
-const player = new PlayerTank();
+// Collision detection
+function checkCollisions() {
+  // Check bullet collisions with walls
+  bullets.forEach(bullet => {
+    walls.forEach(wall => {
+      if (wall.checkCollision(bullet)) {
+        bullet.active = false;
+        wall.destroy();
+      }
+    });
+  });
+}
 
 // Main game loop
 function gameLoop(timestamp) {
@@ -47,12 +73,27 @@ function gameLoop(timestamp) {
   player.update(keys);
   player.draw(ctx);
   
+  // Update and draw enemies
+  enemies.forEach(enemy => {
+    const bullet = enemy.update(player, deltaTime);
+    if (bullet) {
+      bullets.push(bullet);
+    }
+    enemy.draw(ctx);
+  });
+  
+  // Update and draw walls
+  walls.forEach(wall => wall.draw(ctx));
+  
   // Update and draw bullets
   bullets = bullets.filter(b => b.active);
   bullets.forEach(b => {
     b.update();
     b.draw(ctx);
   });
+  
+  // Check collisions
+  checkCollisions();
   
   if (game.running) {
     requestAnimationFrame(gameLoop);
