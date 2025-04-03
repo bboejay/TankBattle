@@ -21,7 +21,7 @@ class PlayerTank {
     switch(this.direction) {
       case 'up':
         ctx.moveTo(this.x + this.width/2, this.y);
-        ctx.lineTo(this x + this.width/2, this.y - 20);
+        ctx.lineTo(this.x + this.width/2, this.y - 20);
         break;
       case 'down':
         ctx.moveTo(this.x + this.width/2, this.y + this.height);
